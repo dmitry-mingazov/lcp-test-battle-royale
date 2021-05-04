@@ -14,33 +14,60 @@ import com.sample.Turn;
 
 
 
-rule "Game exists"
+rule "Game not started yet"
 	when
-		$g: GameHandler()
+		$g: GameHandler($m: map, gameStatus == -1)
 	then
 		System.out.println("Game started");
 		$g.spawnPlayers();
-		System.out.println($g.getMap());
+		System.out.println($m);
 		$g.initGame();
 		Player currPlayer = $g.getCurrentPlayer();
-		Turn turn = new Turn(currPlayer, $g.getMap().getPlayerPOIs(currPlayer));
+		Turn turn = new Turn(currPlayer, $m.getPlayerPOIs(currPlayer));
+		insert(turn);
+end
+
+rule "Game started and changed"
+	when
+		$g: GameHandler($m: map, gameStatus == 0, $t: turnCounter)
+	then
+		System.out.println("Turn n. " + $t);
+		System.out.println($m);
+		$g.changeTurn();
+		Player currPlayer = $g.getCurrentPlayer();
+		Turn turn = new Turn(currPlayer, $m.getPlayerPOIs(currPlayer));
 		insert(turn);
 end
 
 rule "Turn: interaction"
 	when
 		GameHandler($m: map)
-		Turn($p: player, POIs.length > 0)
+		$t: Turn($p: player, $pois: POIs, $pois.length > 0)
 	then
 		System.out.println("Interaction "+$p);
+		System.out.println($pois[0]);
+		retract($t);
 end
 
 rule "Turn: movement"
 	when
 		GameHandler($m: map)
-		Turn($p: player, POIs.length == 0)
+		$t: Turn($p: player, POIs.length == 0)
 	then
 		System.out.println("Movement "+$p);
+		retract($t);
+		Action action = new Action($p, "movement");
+		insert(action);
+end
+
+rule "Action: movement"
+	when
+		$g: GameHandler($m: map)
+		$a: Action($p: player, type.equals("movement"))
+	then
+		$m.movePlayerOf($p, $a.getMovement());
+		retract($a);
+		update($g);
 end
 
 rule "Your Second Rule"

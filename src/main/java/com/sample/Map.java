@@ -58,8 +58,8 @@ public class Map {
 	
 	public Entity[] getPlayerPOIs(Player player) {
 		int[] coordinates = this.getPlayerCoordinates(player);
-		int _y = coordinates[1];
-		int _x = coordinates[0];
+		int _y = coordinates[0];
+		int _x = coordinates[1];
 		int playerVision = player.getVision();
 		int startY = _y - playerVision > 0 ? _y - playerVision : 0; 
 		int endY = _y + playerVision < this.height ? _y + playerVision : this.height; 
@@ -80,6 +80,18 @@ public class Map {
 		}
 		
 		return POIs.toArray(new Entity[0]);
+	}
+	
+	public void movePlayerOf(Player player, int[] offset) {
+		int[] coordinates = this.getPlayerCoordinates(player);
+		int y = coordinates[0];
+		int x = coordinates[1];
+		int tmpY = y + offset[0];
+		int tmpX = x + offset[1];
+		int _y = tmpY < 0 ? 0 : tmpY >= this.height ? this.height - 1 : tmpY;
+		int _x = tmpX < 0 ? 0 : tmpX >= this.width ? this.width - 1 : tmpX;
+		this.grid[y][x].removeContent();
+		this.grid[_y][_x].insertContent(player);
 	}
 
 	@Override

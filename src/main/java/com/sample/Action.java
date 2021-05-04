@@ -1,25 +1,34 @@
 package com.sample;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Action {
 	
 	private Player player;
-	private boolean isFinished;
+	private String type;
 
-	public Action(Player player) {
+	public Action(Player player, String type) {
 		this.player = player;
-		this.isFinished = false;
+		this.type = type;
 	}
 	
 	public Player getPlayer() {
 		return this.player;
 	}
+	
+	public String getType() {
+		return this.type;
+	}
+	
+	public int[] getMovement() {
+		if (type.equals("movement")) {
+			int x = ThreadLocalRandom.current().nextInt(0, player.getVision());
+			int y = ThreadLocalRandom.current().nextInt(0, player.getVision());
+			int[] movement = {y, x};
+			return movement;
+		} else {
+			return null;
+		}
+	}
 
-	public boolean isFinished() {
-		return isFinished;
-	}
-	
-	public void endAction() {
-		this.isFinished = true;
-	}
-	
 }

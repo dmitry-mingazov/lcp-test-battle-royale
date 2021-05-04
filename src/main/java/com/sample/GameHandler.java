@@ -12,20 +12,27 @@ public class GameHandler {
 	private Map map;
 	private Player[] players;
 	private Player currentPlayer;
-	
+	private int gameStatus;
 	
 	private int turn = -1;
+	
+	private int turnCounter = 0;
 	
 	public GameHandler(Player[] players, Map map) {
 		this.players = players;
 		this.map = map;
+		this.gameStatus = -1;
 	}
 	
 	public void initGame() {
+		this.gameStatus = 0;
 		this.changeTurn();
 	}
 	
 	public void changeTurn() {
+		if(this.turnCounter++ > 10) {
+			this.gameStatus = 1;
+		}
 		this.turn = (this.turn + 1) % this.players.length;
 		this.currentPlayer = this.players[this.turn];
 	}
@@ -46,6 +53,14 @@ public class GameHandler {
 
 	public Map getMap() {
 		return map;
+	}
+	
+	public int getTurnCounter() {
+		return this.turnCounter;
+	}
+	
+	public int getGameStatus() {
+		return this.gameStatus;
 	}
 	
 	public static void main(String[] args) {

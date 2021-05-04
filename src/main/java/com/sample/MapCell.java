@@ -15,12 +15,16 @@ public class MapCell {
 		this.content = entity;
 	}
 	
+	public void removeContent() {
+		this.content = null;
+	}
+	
 	@Override
 	public String toString() {
 		if(this.content != null) {
 			return this.content.toString();
 		} else {
-			return "empty";
+			return "    ";
 		}
 	}
 }
